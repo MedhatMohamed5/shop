@@ -44,11 +44,13 @@ class CartScreen extends StatelessWidget {
                   ),
                   SizedBox(width: 4),
                   FlatButton(
-                    onPressed: () {},
+                    onPressed: cart.itemCount > 0 ? () {} : null,
                     child: Text(
                       'Order now'.toUpperCase(),
                       style: TextStyle(
-                        color: Theme.of(context).primaryColor,
+                        color: cart.itemCount > 0
+                            ? Theme.of(context).primaryColor
+                            : Colors.grey,
                       ),
                     ),
                   ),
@@ -64,6 +66,7 @@ class CartScreen extends StatelessWidget {
             child: ListView.builder(
               itemBuilder: (ctx, index) => CartItem(
                 cart.items.values.toList()[index].id,
+                cart.items.keys.toList()[index],
                 cart.items.values.toList()[index].title,
                 cart.items.values.toList()[index].price,
                 cart.items.values.toList()[index].quantity,
