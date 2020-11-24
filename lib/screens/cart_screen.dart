@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/cart_item.dart';
 import '../providers/cart.dart' show Cart;
+import '../providers/orders.dart';
 
 /// Using show to not import CartItem class from it as it conflicting with CartItem widget
 
@@ -44,7 +45,17 @@ class CartScreen extends StatelessWidget {
                   ),
                   SizedBox(width: 4),
                   FlatButton(
-                    onPressed: cart.itemCount > 0 ? () {} : null,
+                    onPressed: cart.itemCount > 0
+                        ? () {
+                            Provider.of<Orders>(
+                              context,
+                              listen: false,
+                            ).addOrder(
+                                cart.items.values.toList(), cart.totalAmount);
+
+                            cart.clear();
+                          }
+                        : null,
                     child: Text(
                       'Order now'.toUpperCase(),
                       style: TextStyle(
