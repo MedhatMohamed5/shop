@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+
+import './screens/cart_screen.dart';
 import './screens/product_detail_screen.dart';
 import './screens/products_overview_screen.dart';
 import './providers/products.dart';
+import './providers/cart.dart';
+
 import 'package:provider/provider.dart';
 
 void main() {
@@ -12,9 +16,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     /// here i create new instance , so it's efficient to use default constructor not value constructor
-    return ChangeNotifierProvider(
-      //.value(
-      create: (ctx) => Products(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          //.value(
+          create: (ctx) => Products(),
+        ),
+        ChangeNotifierProvider(
+          //.value(
+          create: (ctx) => Cart(),
+        ),
+      ],
       //value: Products(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -29,6 +41,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (ctx) => ProductOverviewScreen(),
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
+          CartScreen.routeName: (ctx) => CartScreen(),
         },
       ),
     );
