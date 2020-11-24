@@ -18,9 +18,13 @@ class ProductItem extends StatelessWidget {
   //   this.price,
   // );
 
+  /// Using consumer in the part will make this part only rebuilt
+  /// with using false listen in provider of won't make all method to be rerun
+
   @override
   Widget build(BuildContext context) {
-    final product = Provider.of<Product>(context);
+    final product = Provider.of<Product>(context, listen: false);
+    // print('Product rebuild');
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -47,11 +51,13 @@ class ProductItem extends StatelessWidget {
           ),
         ),
         footer: GridTileBar(
-          leading: IconButton(
-            icon: Icon(
-                product.isFavorite ? Icons.favorite : Icons.favorite_border),
-            color: Theme.of(context).accentColor,
-            onPressed: () => product.toggleFavoriteStatus(),
+          leading: Consumer<Product>(
+            builder: (ctx, product, _) => IconButton(
+              icon: Icon(
+                  product.isFavorite ? Icons.favorite : Icons.favorite_border),
+              color: Theme.of(context).accentColor,
+              onPressed: () => product.toggleFavoriteStatus(),
+            ),
           ),
           backgroundColor: Colors.black87,
           title: Text(
