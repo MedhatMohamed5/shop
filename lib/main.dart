@@ -11,9 +11,13 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    /// here i create new instance , so it's efficient to use default constructor not value constructor
     return ChangeNotifierProvider(
+      //.value(
       create: (ctx) => Products(),
+      //value: Products(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'My Shop',
         theme: ThemeData(
           primarySwatch: Colors.purple,

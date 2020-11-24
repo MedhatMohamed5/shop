@@ -18,8 +18,12 @@ class ProductsGrid extends StatelessWidget {
         mainAxisSpacing: 10.0,
         crossAxisSpacing: 10.0,
       ),
-      itemBuilder: (ctx, index) => ChangeNotifierProvider(
-        create: (_) => products[index],
+
+      /// here i don't depened on context, so we can use value constractor instead of default
+      /// and we use existing object not creating new one
+      itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
+        //create: (_) => products[index],
+        value: products[index],
         child: ProductItem(
             // products[index].id,
             // products[index].title,
