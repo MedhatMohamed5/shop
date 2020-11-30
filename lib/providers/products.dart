@@ -66,23 +66,24 @@ class Products with ChangeNotifier {
     return _items.firstWhere((product) => product.id == id);
   }
 
-  Future<void> addProduct(Product product) {
+  Future<void> addProduct(Product product) async {
     const url = 'https://fluttershop-13ce0.firebaseio.com/products.json';
 
-    return http
-        .post(
-      url,
-      body: json.encode(
-        {
-          'title': product.title,
-          'description': product.description,
-          'imageUrl': product.imageUrl,
-          'price': product.price,
-          'isFavorite': product.isFavorite,
-        },
-      ),
-    )
-        .then((response) {
+    /// with async keyword all code is rapped as a future, so you don't need to use return keyword
+    // return
+    try {
+      final response = await http.post(
+        url,
+        body: json.encode(
+          {
+            'title': product.title,
+            'description': product.description,
+            'imageUrl': product.imageUrl,
+            'price': product.price,
+            'isFavorite': product.isFavorite,
+          },
+        ),
+      );
       final newProduct = Product(
         // id: DateTime.now().toString(),
         id: json.decode(response.body)['name'],
@@ -93,10 +94,16 @@ class Products with ChangeNotifier {
       );
       _items.add(newProduct);
       notifyListeners();
-    }).catchError((onError) {
-      print(onError);
-      throw onError;
-    });
+    } catch (error) {
+      print(error);
+      throw error;
+    }
+    // .then((response) {
+
+    // }).catchError((onError) {
+    //   print(onError);
+    //   throw onError;
+    // });
   }
 
   void updateProduct(String id, Product product) {
