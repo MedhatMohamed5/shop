@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../providers/products.dart';
 
 import '../providers/product.dart';
 
@@ -26,6 +27,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
+    final scaffold = Scaffold.of(context);
 
     // print('Product rebuild');
     return ClipRRect(
@@ -59,7 +61,25 @@ class ProductItem extends StatelessWidget {
               icon: Icon(
                   product.isFavorite ? Icons.favorite : Icons.favorite_border),
               color: Theme.of(context).accentColor,
-              onPressed: () => product.toggleFavoriteStatus(),
+              onPressed: () async {
+                try {
+                  await Provider.of<Products>(context, listen: false)
+                      .toggleFavorite(product.id, product);
+                  scaffold.hideCurrentSnackBar();
+                  scaffold.showSnackBar(
+                    SnackBar(
+                      content: Text('Updated!'),
+                    ),
+                  );
+                } catch (onError) {
+                  scaffold.hideCurrentSnackBar();
+                  scaffold.showSnackBar(
+                    SnackBar(
+                      content: Text('$onError'),
+                    ),
+                  );
+                }
+              }, //product.toggleFavoriteStatus(),
             ),
           ),
           backgroundColor: Colors.black87,

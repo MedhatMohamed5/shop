@@ -44,27 +44,7 @@ class CartScreen extends StatelessWidget {
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
                   SizedBox(width: 4),
-                  FlatButton(
-                    onPressed: cart.itemCount > 0
-                        ? () {
-                            Provider.of<Orders>(
-                              context,
-                              listen: false,
-                            ).addOrder(
-                                cart.items.values.toList(), cart.totalAmount);
-
-                            cart.clear();
-                          }
-                        : null,
-                    child: Text(
-                      'Order now'.toUpperCase(),
-                      style: TextStyle(
-                        color: cart.itemCount > 0
-                            ? Theme.of(context).primaryColor
-                            : Colors.grey,
-                      ),
-                    ),
-                  ),
+                  OrderButton(cart: cart),
                 ],
               ),
             ),
@@ -87,6 +67,61 @@ class CartScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    Key key,
+    @required this.cart,
+  }) : super(key: key);
+
+  final Cart cart;
+
+  @override
+  _OrderButtonState createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var _isLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      onPressed: (widget.cart.itemCount <= 0 || _isLoading)
+          ? null
+          : () async {
+              setState(() {
+                _isLoading = true;
+              });
+              try {
+                await Provider.of<Orders>(
+                  context,
+                  listen: false,
+                ).addOrder(
+                  widget.cart.items.values.toList(),
+                  widget.cart.totalAmount,
+                );
+
+                widget.cart.clear();
+              } catch (onError) {
+                print("$onError");
+              } finally {
+                setState(() {
+                  _isLoading = false;
+                });
+              }
+            },
+      child: _isLoading
+          ? CircularProgressIndicator()
+          : Text(
+              'Order now'.toUpperCase(),
+              style: TextStyle(
+                color: widget.cart.itemCount > 0
+                    ? Theme.of(context).primaryColor
+                    : Colors.grey,
+              ),
+            ),
     );
   }
 }

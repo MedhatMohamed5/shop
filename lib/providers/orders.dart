@@ -1,4 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+import 'package:shop/models/http_exception.dart';
 import './cart.dart';
 
 class OrderItem {
@@ -22,11 +26,38 @@ class Orders with ChangeNotifier {
     return [..._orders];
   }
 
-  void addOrder(List<CartItem> cartProducts, double total) {
+  Future<void> addOrder(List<CartItem> cartProducts, double total) async {
+    const url = 'https://fluttershop-13ce0.firebaseio.com/orders.json';
+    final timeStamp = DateTime.now();
+
+    final response = await http.post(
+      url,
+      body: json.encode(
+        {
+          'amount': total,
+          'dateTime': timeStamp.toIso8601String(),
+          'products': cartProducts
+              .map(
+                (cp) => {
+                  'id': cp.id,
+                  'title': cp.title,
+                  'quantity': cp.quantity,
+                  'price': cp.price,
+                },
+              )
+              .toList(),
+        },
+      ),
+    );
+
+    if (response.statusCode >= 400) {
+      throw HttpException('Can not make order right now');
+    }
+
     _orders.insert(
       0,
       OrderItem(
-        id: DateTime.now().toString(),
+        id: json.decode(response.body)['name'],
         products: cartProducts,
         dateTime: DateTime.now(),
         amount: total,
