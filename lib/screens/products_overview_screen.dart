@@ -57,6 +57,10 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
     super.didChangeDependencies();
   }
 
+  Future<void> _refreshProducts(BuildContext context) async {
+    await Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+  }
+
   @override
   Widget build(BuildContext context) {
     // final productsContainer = Provider.of<Products>(context, listen: false);
@@ -117,7 +121,10 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : ProductsGrid(_showOnlyFavorites),
+          : RefreshIndicator(
+              onRefresh: () => _refreshProducts(context),
+              child: ProductsGrid(_showOnlyFavorites),
+            ),
     );
   }
 }
