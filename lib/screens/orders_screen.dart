@@ -14,33 +14,20 @@ class OrdersScreen extends StatefulWidget {
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
-  var _isLoading = false;
+  Future _ordersFuture;
+  Future _obtainOrdersFuture() {
+    return Provider.of<Orders>(context, listen: false).fetchAndSetOrders();
+  }
 
   @override
   void initState() {
-    Future.delayed(
-      Duration.zero,
-    ).then((_) async {
-      setState(() {
-        _isLoading = true;
-      });
-      try {
-        await Provider.of<Orders>(context, listen: false).fetchAndSetOrders();
-      } catch (onError) {
-        print(onError);
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    });
-
+    _ordersFuture = _obtainOrdersFuture();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final orderData = Provider.of<Orders>(context);
+    // final orderData = Provider.of<Orders>(context);
 
     return Scaffold(
       drawer: AppDrawer(),
@@ -49,7 +36,31 @@ class _OrdersScreenState extends State<OrdersScreen> {
           'Your Orders',
         ),
       ),
-      body: _isLoading
+      body: FutureBuilder(
+        future:
+            _ordersFuture, //Provider.of<Orders>(context, listen: false).fetchAndSetOrders(),
+        builder: (ctx, dataSnapshot) {
+          if (dataSnapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            if (dataSnapshot.error != null) {
+              return Text('Error occured');
+            } else {
+              return Consumer<Orders>(
+                builder: (ctx, orderData, child) => ListView.builder(
+                  itemBuilder: (ctx, index) => OrderItem(
+                    orderData.orders[index],
+                  ),
+                  itemCount: orderData.orders.length,
+                ),
+              );
+            }
+          }
+        },
+      ),
+      /*_isLoading
           ? Center(
               child: CircularProgressIndicator(),
             )
@@ -58,7 +69,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                 orderData.orders[index],
               ),
               itemCount: orderData.orders.length,
-            ),
+            ),*/
     );
   }
 }
