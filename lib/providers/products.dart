@@ -191,7 +191,7 @@ class Products with ChangeNotifier {
     if (response.statusCode >= 400) {
       product.toggleFavoriteStatus();
       notifyListeners();
-      throw HttpException('Could not update product');
+      throw HttpException('Could not add to favourite right now');
     }
     //existingProdut = null;
   }
