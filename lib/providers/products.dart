@@ -74,18 +74,20 @@ class Products with ChangeNotifier {
 
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
-      extractedData.forEach((prodId, prodData) {
-        loadedProducts.add(
-          Product(
-            id: prodId,
-            title: prodData['title'],
-            price: prodData['price'],
-            description: prodData['description'],
-            imageUrl: prodData['imageUrl'],
-            isFavorite: prodData['isFavorite'],
-          ),
-        );
-      });
+      if (extractedData != null && extractedData['error'] == null) {
+        extractedData.forEach((prodId, prodData) {
+          loadedProducts.add(
+            Product(
+              id: prodId,
+              title: prodData['title'],
+              price: prodData['price'],
+              description: prodData['description'],
+              imageUrl: prodData['imageUrl'],
+              isFavorite: prodData['isFavorite'],
+            ),
+          );
+        });
+      }
       _items = loadedProducts;
       notifyListeners();
     } catch (error) {
