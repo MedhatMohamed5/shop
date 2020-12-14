@@ -41,7 +41,10 @@ class Products with ChangeNotifier {
     // ),
   ];
 
-  final url = 'https://fluttershop-13ce0.firebaseio.com/products.json';
+  final String authToken;
+
+  Products(this.authToken, this._items);
+
   //var _showFavoritesOnly = false;
 
   List<Product> get items {
@@ -69,6 +72,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
+    final url =
+        'https://fluttershop-13ce0.firebaseio.com/products.json?auth=$authToken';
     try {
       final response = await http.get(url);
 
@@ -98,6 +103,8 @@ class Products with ChangeNotifier {
   Future<void> addProduct(Product product) async {
     /// with async keyword all code is rapped as a future, so you don't need to use return keyword
     // return
+    final url =
+        'https://fluttershop-13ce0.firebaseio.com/products.json?auth=$authToken';
     try {
       final response = await http.post(
         url,
@@ -137,7 +144,7 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
       final updateUrl =
-          'https://fluttershop-13ce0.firebaseio.com/products/$id.json';
+          'https://fluttershop-13ce0.firebaseio.com/products/$id.jsonauth=$authToken';
       try {
         await http.patch(
           updateUrl,
@@ -160,7 +167,7 @@ class Products with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final deleteUrl =
-        'https://fluttershop-13ce0.firebaseio.com/products/$id.json';
+        'https://fluttershop-13ce0.firebaseio.com/products/$id.jsonauth=$authToken';
 
     final existingProdutIndex = _items.indexWhere((prod) => prod.id == id);
     var existingProdut = _items[existingProdutIndex];
@@ -177,7 +184,7 @@ class Products with ChangeNotifier {
 
   Future<void> toggleFavorite(String id, Product product) async {
     final addToFavoriteUrl =
-        'https://fluttershop-13ce0.firebaseio.com/products/$id.json';
+        'https://fluttershop-13ce0.firebaseio.com/products/$id.jsonauth=$authToken';
 
     //final existingProdutIndex = _items.indexWhere((prod) => prod.id == id);
     //var existingProdut = _items[existingProdutIndex];
