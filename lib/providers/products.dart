@@ -144,7 +144,7 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
       final updateUrl =
-          'https://fluttershop-13ce0.firebaseio.com/products/$id.jsonauth=$authToken';
+          'https://fluttershop-13ce0.firebaseio.com/products/$id.json?auth=$authToken';
       try {
         await http.patch(
           updateUrl,
@@ -167,7 +167,7 @@ class Products with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final deleteUrl =
-        'https://fluttershop-13ce0.firebaseio.com/products/$id.jsonauth=$authToken';
+        'https://fluttershop-13ce0.firebaseio.com/products/$id.json?auth=$authToken';
 
     final existingProdutIndex = _items.indexWhere((prod) => prod.id == id);
     var existingProdut = _items[existingProdutIndex];
@@ -184,7 +184,7 @@ class Products with ChangeNotifier {
 
   Future<void> toggleFavorite(String id, Product product) async {
     final addToFavoriteUrl =
-        'https://fluttershop-13ce0.firebaseio.com/products/$id.jsonauth=$authToken';
+        'https://fluttershop-13ce0.firebaseio.com/products/$id.json?auth=$authToken';
 
     //final existingProdutIndex = _items.indexWhere((prod) => prod.id == id);
     //var existingProdut = _items[existingProdutIndex];

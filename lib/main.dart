@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/edit_product_screen.dart';
+import './screens/edit_product_screen.dart';
 import './screens/user_products_screen.dart';
 import './screens/orders_screen.dart';
 import './screens/auth_screen.dart';
@@ -36,8 +36,10 @@ class MyApp extends StatelessWidget {
           //.value(
           create: (ctx) => Cart(),
         ),
-        ChangeNotifierProvider(
-          create: (ctx) => Orders(),
+        ChangeNotifierProxyProvider<Auth, Orders>(
+          create: null,
+          update: (ctx, auth, prevOrders) =>
+              Orders(auth.token, prevOrders == null ? [] : prevOrders.orders),
         ),
       ],
       //value: Products(),
