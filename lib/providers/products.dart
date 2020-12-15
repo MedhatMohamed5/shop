@@ -42,8 +42,9 @@ class Products with ChangeNotifier {
   ];
 
   final String authToken;
+  final String userId;
 
-  Products(this.authToken, this._items);
+  Products(this.authToken, this._items, this.userId);
 
   //var _showFavoritesOnly = false;
 
@@ -74,10 +75,18 @@ class Products with ChangeNotifier {
   Future<void> fetchAndSetProducts() async {
     final url =
         'https://fluttershop-13ce0.firebaseio.com/products.json?auth=$authToken';
+
     try {
       final response = await http.get(url);
 
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
+
+      final favoriteUrl =
+          'https://fluttershop-13ce0.firebaseio.com/userFavorites/$userId.json?auth=$authToken';
+
+      final favoriteResponse = await http.get(favoriteUrl);
+      final favoriteData = jsonDecode(favoriteResponse.body);
+
       final List<Product> loadedProducts = [];
       if (extractedData != null && extractedData['error'] == null) {
         extractedData.forEach((prodId, prodData) {
@@ -88,7 +97,8 @@ class Products with ChangeNotifier {
               price: prodData['price'],
               description: prodData['description'],
               imageUrl: prodData['imageUrl'],
-              isFavorite: prodData['isFavorite'],
+              isFavorite:
+                  favoriteData == null ? false : favoriteData[prodId] ?? false,
             ),
           );
         });
@@ -114,7 +124,6 @@ class Products with ChangeNotifier {
             'description': product.description,
             'imageUrl': product.imageUrl,
             'price': product.price,
-            'isFavorite': product.isFavorite,
           },
         ),
       );
@@ -184,18 +193,18 @@ class Products with ChangeNotifier {
 
   Future<void> toggleFavorite(String id, Product product) async {
     final addToFavoriteUrl =
-        'https://fluttershop-13ce0.firebaseio.com/products/$id.json?auth=$authToken';
+        'https://fluttershop-13ce0.firebaseio.com/userFavorites/$userId/$id.json?auth=$authToken';
 
     //final existingProdutIndex = _items.indexWhere((prod) => prod.id == id);
     //var existingProdut = _items[existingProdutIndex];
 
     product.toggleFavoriteStatus();
     notifyListeners();
-    final response = await http.patch(
+    final response = await http.put(
       addToFavoriteUrl,
-      body: json.encode({
-        'isFavorite': product.isFavorite,
-      }),
+      body: json.encode(
+        product.isFavorite,
+      ),
     );
     if (response.statusCode >= 400) {
       product.toggleFavoriteStatus();
