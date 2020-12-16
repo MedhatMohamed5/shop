@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop/helpers/customer_route.dart';
 import 'package:shop/screens/splash_screen.dart';
 import './screens/edit_product_screen.dart';
 import './screens/user_products_screen.dart';
@@ -58,6 +59,10 @@ class MyApp extends StatelessWidget {
               accentColor: Colors.orange,
               visualDensity: VisualDensity.adaptivePlatformDensity,
               fontFamily: 'Lato',
+              pageTransitionsTheme: PageTransitionsTheme(builders: {
+                TargetPlatform.android: CustomPageTransitionBuilder(),
+                TargetPlatform.iOS: CustomPageTransitionBuilder(),
+              }),
             ),
             initialRoute: '/',
             routes: {
